@@ -177,3 +177,22 @@ UPDATE Sections SET OrderNumber = OrderNumber;
 GO
 INSERT INTO Presentations (SectionID, SpeakerID, Topic, StartTime, DurationMinutes)
     VALUES (1, 1, 'Повторний виступ', '2026-05-15 14:00:00', 30);
+GO
+	-- Перевірка результату
+SELECT p.PresentationID, p.Topic, p.StartTime, s.FullName, sec.SectionName
+FROM Presentations p
+JOIN Speakers s ON p.SpeakerID = s.SpeakerID
+JOIN Sections sec ON p.SectionID = sec.SectionID
+ORDER BY p.PresentationID DESC;
+GO
+-- Додаємо нових доповідачів
+INSERT INTO Speakers (FullName, AcademicDegree, Workplace, Position, Biography)
+VALUES
+('Максим Коваленко', 'к.е.н.', 'ПриватБанк', 'Керівник департаменту ризиків', 'Експерт з кібербезпеки у банківській сфері з 10-річним досвідом.'),
+('Наталія Дмитренко', 'д.б.н.', 'Інститут генетики', 'Провідний науковий співробітник', 'Спеціаліст з редагування геному та біоінформатики.');
+GO
+
+-- Перевірка, що записи додалися і тригер trg_Speakers_Audit автоматично заповнив технічні поля
+SELECT SpeakerID, FullName, Workplace, UCR, DCR 
+FROM Speakers 
+WHERE FullName IN ('Максим Коваленко', 'Наталія Дмитренко');
