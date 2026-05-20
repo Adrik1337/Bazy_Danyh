@@ -55,3 +55,18 @@ DROP LOGIN mod_login;
 DROP LOGIN student_login;
 DROP LOGIN boss_login;
 GO
+-- Перевірка прав для Модератора Івана (через імітацію контексту)
+EXECUTE AS USER = 'moderator_ivan';
+    SELECT 
+        HAS_PERMS_BY_NAME('Speakers', 'OBJECT', 'SELECT') AS CanSelectSpeakers,
+        HAS_PERMS_BY_NAME('Speakers', 'OBJECT', 'UPDATE') AS CanUpdateSpeakers,
+        HAS_PERMS_BY_NAME('Speakers', 'OBJECT', 'DELETE') AS CanDeleteSpeakers; -- Має бути 0
+REVERT;
+
+-- Перевірка прав для Студента
+EXECUTE AS USER = 'student_reader';
+    SELECT 
+        HAS_PERMS_BY_NAME('Speakers', 'OBJECT', 'SELECT') AS CanRead,
+        HAS_PERMS_BY_NAME('Speakers', 'OBJECT', 'INSERT') AS CanInsert; -- Має бути 0
+REVERT;
+GO
